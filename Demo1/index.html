@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 layui.css -->
+    <link rel="stylesheet" href="../../layui/css/layui.css">
+    <title>Document</title>
+</head>
+
+<style>
+
+</style>
+
+<body>
+
+    <div class="btnDiv">
+        <button class="layui-btn layui-btn-normal" id="btn1">弹出普通文本</button>
+    </div>
+
+    <div>
+        <table class="layui-hide" id="tableId" lay-filter="tableId"></table>
+        <script type="text/html" id="BarTool">
+            <button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="download">
+                下载
+            </button>
+            <button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="look">
+                查看
+            </button>
+        </script>
+    </div>
+
+    <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <div id="content1">
+        <form class="layui-form" lay-filter="form1">
+            <div class="layui-form-item">
+                <label class="layui-form-label">输入框</label>
+                <div class="layui-input-block">
+                    <input type="text" name="input" placeholder="请输入" autocomplete="off" class="layui-input"
+                        lay-verify="required">
+                </div>
+            </div>
+            <!-- <div class="layui-form-item">
+                <label class="layui-form-label">下拉选择框</label>
+                <div class="layui-input-block">
+                    <select lay-filter="user" name="user" id="users">
+
+                    </select>
+                </div>
+            </div> -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">复选框</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" name="write" title="写作">
+                    <input type="checkbox" name="read" title="阅读">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">开关关</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" lay-skin="switch">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">开关开</label>
+                <div class="layui-input-block">
+                    <input type="checkbox" checked lay-skin="switch" name="kaiguan">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">单选框</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="sex" value="0" title="男">
+                    <input type="radio" name="sex" value="1" title="女" checked>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">请填写描述</label>
+                <div class="layui-input-block">
+                    <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="add2">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+            <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+        </form>
+    </div>
+
+
+
+
+    <script src="../../layui/layui.js"></script>
+    <script>
+        layui.use(['layer', 'form', "jquery", "element", "table"], function () {
+            var layer = layui.layer,
+                form = layui.form,
+                $ = layui.jquery,
+                table = layui.table,
+                element = layui.element;
+            var tableObj = null;
+
+            form.on("submit(add2)", function (data) {
+                console.log("触发表单提交");
+                return false;
+            })
+
+            initTable();
+
+            // 工具条事件
+            table.on("tool(tableId)", function (obj) {
+                console.log("obj", obj);
+                if (obj.event === "download") {
+                    layer.msg("下载");
+                } else if (obj.event === "look") {
+                    layer.msg("查看");
+                }
+            })
+
+            // 行点击事件
+            table.on("row(tableId)", function (obj) {
+                console.log("我点击了tabel行", obj);
+                console.log("行数据", obj.data);
+            })
+
+            function initTable() {
+                tableObj = table.render({
+                    elem: "#tableId",
+                    url: "http://127.0.0.1:4523/m1/1478535-0-default/getTableData",
+                    method: "get",
+                    page: true,
+                    title: "111",
+                    request: {
+                        pageName: "PageIndex",
+                        limitName: "PageSize",
+                    },
+                    response: {
+                        statusName: "code",
+                        statusCode: 200,
+                        countName: "count",
+                        dataName: "data",
+                    },
+                    parseData: function (res) {
+                        //res 即为原始返回的数据
+                        return {
+                            code: res.status, //解析接口状态
+                            msg: res.msg, //解析提示文本
+                            count: res.count, //解析数据长度
+                            data: res.data, //解析数据列表
+                        };
+                    },
+                    cols: [
+                        [{
+                                type: "checkbox"
+                            },
+                            {
+                                field: "RowNo",
+                                width: 70,
+                                title: "序号",
+                                align: "center",
+                                type: "numbers",
+                            },
+                            {
+                                field: "Id",
+                                hide: true
+                            },
+                            {
+                                field: "Name",
+                                minWidth: 60,
+                                title: "名称",
+                                align: "center",
+                            },
+                            {
+                                title: "操作",
+                                fixed: "right",
+                                align: "center",
+                                width: 120,
+                                toolbar: "#BarTool",
+                            },
+                        ],
+                    ],
+
+                    done: function (res, curr, count) {
+                        console.log(res);
+                    },
+                })
+            }
+
+            var arr = [{
+                    "code": 20,
+                    "value": "蔡霞"
+                },
+                {
+                    "code": 39,
+                    "value": "薛强"
+                },
+                {
+                    "code": 92,
+                    "value": "罗洋"
+                },
+                {
+                    "code": 15,
+                    "value": "雷磊"
+                },
+                {
+                    "value": "蒋强",
+                    "code": 4
+                }
+            ]
+
+            function addLayer1() {
+                layer.open({
+                    type: 1,
+                    content: $('#content1'),
+                    area: ["500px", "400px"],
+                    title: "我是title",
+                    btn: ['提交', '取消', '按钮三', "按钮4"],
+                    btnAlign: 'c',
+                    success: function (layero, index) {
+                        // $.ajax({
+                        //     url: "http://127.0.0.1:4523/m1/1478535-0-default/getUsers",
+                        //     type: "get",
+                        //     data: {},
+                        //     dataType: "json",
+                        //     success: function (data) {
+                        //         console.log(data.length);
+                        //         if (data) {
+                        //             $("#users").empty();
+                        //             data.forEach((item, index) => {
+                        //                 $("#users").append(new Option(item
+                        //                     .value, item.code));
+                        //             })
+                        //         }
+                        //         console.log(data);
+                        //         //form.render();
+                        //         //form.val("form1", data);
+                        //     }
+                        // });
+                        arr.forEach(item => {
+                            $("#users").append(new Option(item.value, item.code));
+                            if (item.code == 4) {
+                                $("#users").val(item.code);
+                            }
+                            form.render('select');
+                        })
+
+                        // 解决弹框-form验证失效
+                        // 添加form标识
+                        layero.addClass("layui-form");
+                        // 将保存按钮改变成提交按钮
+                        layero.find(".layui-layer-btn0").attr({
+                            "lay-filter": "add",
+                            "lay-submit": "",
+                        });
+                    },
+                    yes: function (index, layero) {
+                        // 打印表单的值
+                        $.ajax({
+                            url: "http://127.0.0.1:4523/m1/1478535-0-default/addUser",
+                            type: "post",
+                            data: {
+                                "User": form.val("form1").user
+                            },
+                            dataType: "json",
+                            success: function (data) {
+                                console.log(data);
+                                if (data.status == 200) {
+                                    layer.close(index);
+                                }
+                                //form.render();
+                                //form.val("form1", data);
+                            }
+                        });
+                        return false;
+                    },
+
+                    btn2: function () {
+                        console.log("我是按钮2");
+                        // 返回return false 既不直接关闭弹出框
+                        return false;
+                    },
+                    cancel: function () {
+                        console.log("点击右上角取消");
+                        //return false;
+                    }
+                })
+            }
+
+            $("#btn1").click(addLayer1)
+
+        });
+    </script>
+</body>
+
+</html>

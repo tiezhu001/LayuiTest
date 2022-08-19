@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 引入 layui.css -->
-    <link rel="stylesheet" href="../../layui/css/layui.css">
+    <link rel="stylesheet" href="../layui/css/layui.css">
     <title>Document</title>
 </head>
 
@@ -95,7 +95,7 @@
 
 
 
-    <script src="../../layui/layui.js"></script>
+    <script src="../layui/layui.js"></script>
     <script>
         layui.use(['layer', 'form', "jquery", "element", "table"], function () {
             var layer = layui.layer,
@@ -111,6 +111,11 @@
             })
 
             initTable();
+
+
+            form.verify({
+               // userName:
+            })
 
             // 工具条事件
             table.on("tool(tableId)", function (obj) {
